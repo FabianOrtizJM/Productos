@@ -12,10 +12,10 @@ namespace Productos.Models
 
         [MaxLength(100)]
         [Required]
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
 
         [MaxLength(250)]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
         // Propiedad de navegación para los productos en esta categoría
         public ICollection<Producto> Productos { get; set; }
