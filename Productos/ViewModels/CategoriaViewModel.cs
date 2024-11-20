@@ -1,4 +1,5 @@
 ﻿using Productos.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,8 @@ namespace Productos.ViewModels
 {
     public class CategoriaViewModel : INotifyPropertyChanged
     {
+        private readonly ProductosDBContext _dbContext;
+
         public ObservableCollection<Categoria> Categorias { get; set; } = new();
 
         private Categoria _categoriaSeleccionada;
@@ -21,36 +24,65 @@ namespace Productos.ViewModels
         public ICommand EditarCategoriaCommand { get; }
         public ICommand EliminarCategoriaCommand { get; }
 
-        public CategoriaViewModel()
+        public CategoriaViewModel(ProductosDBContext dbContext)
         {
+            _dbContext = dbContext;
+
             AgregarCategoriaCommand = new Command(AgregarCategoria);
             EditarCategoriaCommand = new Command(EditarCategoria);
             EliminarCategoriaCommand = new Command(EliminarCategoria);
 
-            // Cargar datos iniciales (ejemplo)
             CargarCategorias();
         }
 
         private void CargarCategorias()
         {
-            // Simulación de datos iniciales
-            Categorias.Add(new Categoria { Id = 1, Nombre = "Electrónica", Descripcion = "Dispositivos electrónicos" });
-            Categorias.Add(new Categoria { Id = 2, Nombre = "Ropa", Descripcion = "Prendas de vestir" });
+            var categorias = _dbContext.Categorias.ToList();
+            Categorias = new ObservableCollection<Categoria>(categorias);
+            OnPropertyChanged(nameof(Categorias));
         }
 
         private void AgregarCategoria()
         {
-            // Lógica para agregar una categoría
+            var nuevaCategoria = new Categoria
+            {
+                Nombre = "Nueva Categoría",
+                Descripcion = "Descripción de categoría"
+            };
+            _dbContext.Categorias.Add(nuevaCategoria);
+            _dbContext.SaveChanges();
+
+            Categorias.Add(nuevaCategoria); // Actualizamos la lista en la vista.
         }
 
         private void EditarCategoria()
         {
-            // Lógica para editar una categoría
+            if (CategoriaSeleccionada != null)
+            {
+                var categoria = _dbContext.Categorias.Find(CategoriaSeleccionada.Id);
+                if (categoria != null)
+                {
+                    categoria.Nombre = CategoriaSeleccionada.Nombre;
+                    categoria.Descripcion = CategoriaSeleccionada.Descripcion;
+                    _dbContext.SaveChanges();
+                    CargarCategorias(); // Refrescamos la lista.
+                }
+            }
         }
 
         private void EliminarCategoria()
         {
-            // Lógica para eliminar una categoría
+            if (CategoriaSeleccionada != null)
+            {
+                var categoria = _dbContext.Categorias.Find(CategoriaSeleccionada.Id);
+                if (categoria != null)
+                {
+                    _dbContext.Categorias.Remove(categoria);
+                    _dbContext.SaveChanges();
+
+                    Categorias.Remove(CategoriaSeleccionada); // Actualizamos la lista.
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

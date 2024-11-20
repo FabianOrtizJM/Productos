@@ -1,4 +1,5 @@
 ﻿using Productos.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,8 @@ namespace Productos.ViewModels
 {
     public class EmpleadoViewModel : INotifyPropertyChanged
     {
+        private readonly ProductosDBContext _dbContext;
+
         public ObservableCollection<Empleado> Empleados { get; set; } = new();
 
         private Empleado _empleadoSeleccionado;
@@ -22,41 +25,75 @@ namespace Productos.ViewModels
         public ICommand EditarEmpleadoCommand { get; }
         public ICommand EliminarEmpleadoCommand { get; }
 
-        public EmpleadoViewModel()
+        public EmpleadoViewModel(ProductosDBContext dbContext)
         {
+            _dbContext = dbContext;
+
             RegistrarEmpleadoCommand = new Command(RegistrarEmpleado);
             IniciarSesionCommand = new Command(IniciarSesion);
             EditarEmpleadoCommand = new Command(EditarEmpleado);
             EliminarEmpleadoCommand = new Command(EliminarEmpleado);
 
-            // Cargar datos iniciales (ejemplo)
             CargarEmpleados();
         }
 
         private void CargarEmpleados()
         {
-            // Simulación de datos iniciales
-            Empleados.Add(new Empleado { Id = 1, Nombre = "Juan", Apellido = "Perez", Correo = "juan@example.com" });
+            var empleados = _dbContext.Empleados.ToList();
+            Empleados = new ObservableCollection<Empleado>(empleados);
+            OnPropertyChanged(nameof(Empleados));
         }
 
         private void RegistrarEmpleado()
         {
-            // Lógica para registrar un empleado
+            var nuevoEmpleado = new Empleado
+            {
+                Nombre = "Nuevo",
+                Apellido = "Empleado",
+                Correo = "nuevo@example.com",
+                Password = "123456"
+            };
+
+            _dbContext.Empleados.Add(nuevoEmpleado);
+            _dbContext.SaveChanges();
+
+            Empleados.Add(nuevoEmpleado);
         }
 
         private void IniciarSesion()
-        {
-            // Lógica para iniciar sesión
-        }
+        { }
 
         private void EditarEmpleado()
         {
-            // Lógica para editar un empleado
+            if (EmpleadoSeleccionado != null)
+            {
+                var empleado = _dbContext.Empleados.Find(EmpleadoSeleccionado.Id);
+                if (empleado != null)
+                {
+                    empleado.Nombre = EmpleadoSeleccionado.Nombre;
+                    empleado.Apellido = EmpleadoSeleccionado.Apellido;
+                    empleado.Correo = EmpleadoSeleccionado.Correo;
+                    empleado.Password = EmpleadoSeleccionado.Password;
+
+                    _dbContext.SaveChanges();
+                    CargarEmpleados(); // Refrescar la lista en la vista.
+                }
+            }
         }
 
         private void EliminarEmpleado()
         {
-            // Lógica para eliminar un empleado
+            if (EmpleadoSeleccionado != null)
+            {
+                var empleado = _dbContext.Empleados.Find(EmpleadoSeleccionado.Id);
+                if (empleado != null)
+                {
+                    _dbContext.Empleados.Remove(empleado);
+                    _dbContext.SaveChanges();
+
+                    Empleados.Remove(EmpleadoSeleccionado);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

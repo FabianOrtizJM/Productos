@@ -1,4 +1,5 @@
 ﻿using Productos.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,8 @@ namespace Productos.ViewModels
 {
     public class ProductoViewModel : INotifyPropertyChanged
     {
+        private readonly ProductosDBContext _dbContext;
+
         public ObservableCollection<Producto> Productos { get; set; } = new();
         public ObservableCollection<Categoria> Categorias { get; set; } = new();
 
@@ -22,36 +25,82 @@ namespace Productos.ViewModels
         public ICommand EditarProductoCommand { get; }
         public ICommand EliminarProductoCommand { get; }
 
-        public ProductoViewModel()
+        public ProductoViewModel(ProductosDBContext dbContext)
         {
+            _dbContext = dbContext;
+
             AgregarProductoCommand = new Command(AgregarProducto);
             EditarProductoCommand = new Command(EditarProducto);
             EliminarProductoCommand = new Command(EliminarProducto);
 
-            // Cargar datos iniciales (ejemplo)
+            CargarCategorias();
             CargarProductos();
         }
 
         private void CargarProductos()
         {
-            // Simulación de datos iniciales
-            Productos.Add(new Producto { Id = 1, Nombre = "Smartphone", Precio = 500, CategoriaId = 1 });
-            Productos.Add(new Producto { Id = 2, Nombre = "Camisa", Precio = 30, CategoriaId = 2 });
+            var productos = _dbContext.Productos.ToList();
+            Productos = new ObservableCollection<Producto>(productos);
+            OnPropertyChanged(nameof(Productos));
+        }
+
+        private void CargarCategorias()
+        {
+            var categorias = _dbContext.Categorias.ToList();
+            Categorias = new ObservableCollection<Categoria>(categorias);
+            OnPropertyChanged(nameof(Categorias));
         }
 
         private void AgregarProducto()
         {
-            // Lógica para agregar un producto
+            if (Categorias.Any()) // Verifica que existan categorías disponibles.
+            {
+                var nuevoProducto = new Producto
+                {
+                    Nombre = "Nuevo Producto",
+                    Descripcion = "Descripción del producto",
+                    Precio = 100,
+                    CategoriaId = Categorias.First().Id // Asignar a la primera categoría disponible.
+                };
+
+                _dbContext.Productos.Add(nuevoProducto);
+                _dbContext.SaveChanges();
+
+                Productos.Add(nuevoProducto);
+            }
         }
 
         private void EditarProducto()
         {
-            // Lógica para editar un producto
+            if (ProductoSeleccionado != null)
+            {
+                var producto = _dbContext.Productos.Find(ProductoSeleccionado.Id);
+                if (producto != null)
+                {
+                    producto.Nombre = ProductoSeleccionado.Nombre;
+                    producto.Descripcion = ProductoSeleccionado.Descripcion;
+                    producto.Precio = ProductoSeleccionado.Precio;
+                    producto.CategoriaId = ProductoSeleccionado.CategoriaId;
+
+                    _dbContext.SaveChanges();
+                    CargarProductos(); // Refrescar la lista.
+                }
+            }
         }
 
         private void EliminarProducto()
         {
-            // Lógica para eliminar un producto
+            if (ProductoSeleccionado != null)
+            {
+                var producto = _dbContext.Productos.Find(ProductoSeleccionado.Id);
+                if (producto != null)
+                {
+                    _dbContext.Productos.Remove(producto);
+                    _dbContext.SaveChanges();
+
+                    Productos.Remove(ProductoSeleccionado);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
