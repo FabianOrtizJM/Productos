@@ -1,112 +1,126 @@
 ﻿using Productos.Models;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Productos.ViewModels
+public class ProductoViewModel : INotifyPropertyChanged
 {
-    public class ProductoViewModel : INotifyPropertyChanged
+    private readonly HttpClient _httpClient;
+    public ObservableCollection<Producto> Productos { get; set; } = new();
+    public ObservableCollection<Categoria> Categorias { get; set; } = new();
+
+    public ICommand CargarProductosCommand { get; }
+    public ICommand AgregarProductoCommand { get; }
+    public ICommand EliminarProductoCommand { get; }
+
+    private Producto _productoSeleccionado;
+    public Producto ProductoSeleccionado
     {
-        private readonly ProductosDBContext _dbContext;
+        get => _productoSeleccionado;
+        set { _productoSeleccionado = value; OnPropertyChanged(); }
+    }
 
-        public ObservableCollection<Producto> Productos { get; set; } = new();
-        public ObservableCollection<Categoria> Categorias { get; set; } = new();
+    public ProductoViewModel(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
 
-        private Producto _productoSeleccionado;
-        public Producto ProductoSeleccionado
+        CargarProductosCommand = new Command(async () => await CargarProductosAsync());
+        AgregarProductoCommand = new Command(async () => await AgregarProductoAsync());
+        EliminarProductoCommand = new Command(async () => await EliminarProductoAsync());
+
+        _ = CargarProductosAsync();
+        _ = CargarCategoriasAsync();
+    }
+
+    private async Task CargarProductosAsync()
+    {
+        try
         {
-            get => _productoSeleccionado;
-            set { _productoSeleccionado = value; OnPropertyChanged(); }
-        }
+            var response = await _httpClient.GetAsync("https://api.example.com/productos");
+            response.EnsureSuccessStatusCode();
 
-        public ICommand AgregarProductoCommand { get; }
-        public ICommand EditarProductoCommand { get; }
-        public ICommand EliminarProductoCommand { get; }
+            var json = await response.Content.ReadAsStringAsync();
+            var productos = JsonSerializer.Deserialize<List<Producto>>(json);
 
-        public ProductoViewModel(ProductosDBContext dbContext)
-        {
-            _dbContext = dbContext;
-
-            AgregarProductoCommand = new Command(AgregarProducto);
-            EditarProductoCommand = new Command(EditarProducto);
-            EliminarProductoCommand = new Command(EliminarProducto);
-
-            CargarCategorias();
-            CargarProductos();
-        }
-
-        private void CargarProductos()
-        {
-            var productos = _dbContext.Productos.ToList();
             Productos = new ObservableCollection<Producto>(productos);
             OnPropertyChanged(nameof(Productos));
         }
-
-        private void CargarCategorias()
+        catch (Exception ex)
         {
-            var categorias = _dbContext.Categorias.ToList();
+            Console.WriteLine($"Error al cargar productos: {ex.Message}");
+        }
+    }
+
+    private async Task CargarCategoriasAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("https://api.example.com/categorias");
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var categorias = JsonSerializer.Deserialize<List<Categoria>>(json);
+
             Categorias = new ObservableCollection<Categoria>(categorias);
             OnPropertyChanged(nameof(Categorias));
         }
-
-        private void AgregarProducto()
+        catch (Exception ex)
         {
-            if (Categorias.Any()) // Verifica que existan categorías disponibles.
+            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
+        }
+    }
+
+    private async Task AgregarProductoAsync()
+    {
+        try
+        {
+            var nuevoProducto = new Producto
             {
-                var nuevoProducto = new Producto
-                {
-                    Nombre = "Nuevo Producto",
-                    Descripcion = "Descripción del producto",
-                    Precio = 100,
-                    CategoriaId = Categorias.First().Id // Asignar a la primera categoría disponible.
-                };
+                Nombre = "Nuevo Producto",
+                Descripcion = "Descripción",
+                Precio = 100,
+                CategoriaId = Categorias.FirstOrDefault()?.Id ?? 0
+            };
 
-                _dbContext.Productos.Add(nuevoProducto);
-                _dbContext.SaveChanges();
+            var json = JsonSerializer.Serialize(nuevoProducto);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                Productos.Add(nuevoProducto);
-            }
+            var response = await _httpClient.PostAsync("https://api.example.com/productos", content);
+            response.EnsureSuccessStatusCode();
+
+            Productos.Add(nuevoProducto);
         }
-
-        private void EditarProducto()
+        catch (Exception ex)
         {
-            if (ProductoSeleccionado != null)
-            {
-                var producto = _dbContext.Productos.Find(ProductoSeleccionado.Id);
-                if (producto != null)
-                {
-                    producto.Nombre = ProductoSeleccionado.Nombre;
-                    producto.Descripcion = ProductoSeleccionado.Descripcion;
-                    producto.Precio = ProductoSeleccionado.Precio;
-                    producto.CategoriaId = ProductoSeleccionado.CategoriaId;
-
-                    _dbContext.SaveChanges();
-                    CargarProductos(); // Refrescar la lista.
-                }
-            }
+            Console.WriteLine($"Error al agregar producto: {ex.Message}");
         }
+    }
 
-        private void EliminarProducto()
+    private async Task EliminarProductoAsync()
+    {
+        try
         {
-            if (ProductoSeleccionado != null)
-            {
-                var producto = _dbContext.Productos.Find(ProductoSeleccionado.Id);
-                if (producto != null)
-                {
-                    _dbContext.Productos.Remove(producto);
-                    _dbContext.SaveChanges();
+            if (ProductoSeleccionado == null) return;
 
-                    Productos.Remove(ProductoSeleccionado);
-                }
-            }
+            var response = await _httpClient.DeleteAsync($"https://api.example.com/productos/{ProductoSeleccionado.Id}");
+            response.EnsureSuccessStatusCode();
+
+            Productos.Remove(ProductoSeleccionado);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        catch (Exception ex)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Console.WriteLine($"Error al eliminar producto: {ex.Message}");
         }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

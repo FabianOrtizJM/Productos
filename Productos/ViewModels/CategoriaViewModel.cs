@@ -1,94 +1,98 @@
 ﻿using Productos.Models;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Productos.ViewModels
+public class CategoriaViewModel : INotifyPropertyChanged
 {
-    public class CategoriaViewModel : INotifyPropertyChanged
+    private readonly HttpClient _httpClient;
+    public ObservableCollection<Categoria> Categorias { get; set; } = new();
+
+    public ICommand CargarCategoriasCommand { get; }
+    public ICommand AgregarCategoriaCommand { get; }
+    public ICommand EliminarCategoriaCommand { get; }
+
+    private Categoria _categoriaSeleccionada;
+    public Categoria CategoriaSeleccionada
     {
-        private readonly ProductosDBContext _dbContext;
+        get => _categoriaSeleccionada;
+        set { _categoriaSeleccionada = value; OnPropertyChanged(); }
+    }
 
-        public ObservableCollection<Categoria> Categorias { get; set; } = new();
+    public CategoriaViewModel(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
 
-        private Categoria _categoriaSeleccionada;
-        public Categoria CategoriaSeleccionada
+        CargarCategoriasCommand = new Command(async () => await CargarCategoriasAsync());
+        AgregarCategoriaCommand = new Command(async () => await AgregarCategoriaAsync());
+        EliminarCategoriaCommand = new Command(async () => await EliminarCategoriaAsync());
+
+        _ = CargarCategoriasAsync();
+    }
+
+    private async Task CargarCategoriasAsync()
+    {
+        try
         {
-            get => _categoriaSeleccionada;
-            set { _categoriaSeleccionada = value; OnPropertyChanged(); }
-        }
+            var response = await _httpClient.GetAsync("https://api.example.com/categorias");
+            response.EnsureSuccessStatusCode();
 
-        public ICommand AgregarCategoriaCommand { get; }
-        public ICommand EditarCategoriaCommand { get; }
-        public ICommand EliminarCategoriaCommand { get; }
+            var json = await response.Content.ReadAsStringAsync();
+            var categorias = JsonSerializer.Deserialize<List<Categoria>>(json);
 
-        public CategoriaViewModel(ProductosDBContext dbContext)
-        {
-            _dbContext = dbContext;
-
-            AgregarCategoriaCommand = new Command(AgregarCategoria);
-            EditarCategoriaCommand = new Command(EditarCategoria);
-            EliminarCategoriaCommand = new Command(EliminarCategoria);
-
-            CargarCategorias();
-        }
-
-        private void CargarCategorias()
-        {
-            var categorias = _dbContext.Categorias.ToList();
             Categorias = new ObservableCollection<Categoria>(categorias);
             OnPropertyChanged(nameof(Categorias));
         }
-
-        private void AgregarCategoria()
+        catch (Exception ex)
         {
-            var nuevaCategoria = new Categoria
-            {
-                Nombre = "Nueva Categoría",
-                Descripcion = "Descripción de categoría"
-            };
-            _dbContext.Categorias.Add(nuevaCategoria);
-            _dbContext.SaveChanges();
-
-            Categorias.Add(nuevaCategoria); // Actualizamos la lista en la vista.
+            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
         }
+    }
 
-        private void EditarCategoria()
+    private async Task AgregarCategoriaAsync()
+    {
+        try
         {
-            if (CategoriaSeleccionada != null)
-            {
-                var categoria = _dbContext.Categorias.Find(CategoriaSeleccionada.Id);
-                if (categoria != null)
-                {
-                    categoria.Nombre = CategoriaSeleccionada.Nombre;
-                    categoria.Descripcion = CategoriaSeleccionada.Descripcion;
-                    _dbContext.SaveChanges();
-                    CargarCategorias(); // Refrescamos la lista.
-                }
-            }
-        }
+            var nuevaCategoria = new Categoria { Nombre = "Nueva Categoría" };
+            var json = JsonSerializer.Serialize(nuevaCategoria);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-        private void EliminarCategoria()
+            var response = await _httpClient.PostAsync("https://api.example.com/categorias", content);
+            response.EnsureSuccessStatusCode();
+
+            Categorias.Add(nuevaCategoria);
+        }
+        catch (Exception ex)
         {
-            if (CategoriaSeleccionada != null)
-            {
-                var categoria = _dbContext.Categorias.Find(CategoriaSeleccionada.Id);
-                if (categoria != null)
-                {
-                    _dbContext.Categorias.Remove(categoria);
-                    _dbContext.SaveChanges();
-
-                    Categorias.Remove(CategoriaSeleccionada); // Actualizamos la lista.
-                }
-            }
+            Console.WriteLine($"Error al agregar categoría: {ex.Message}");
         }
+    }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    private async Task EliminarCategoriaAsync()
+    {
+        try
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (CategoriaSeleccionada == null) return;
+
+            var response = await _httpClient.DeleteAsync($"https://api.example.com/categorias/{CategoriaSeleccionada.Id}");
+            response.EnsureSuccessStatusCode();
+
+            Categorias.Remove(CategoriaSeleccionada);
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
