@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Productos.Views.Categorias"
+             x:Class="Productos.Views.editCategoria"
              xmlns:vm="clr-namespace:Productos.ViewModels"
              BackgroundColor="Transparent">
 
@@ -29,7 +29,7 @@
                    MaximumWidthRequest="500"
                    Margin="0, 10">
                 <StackLayout Spacing="25">
-                    <!-- Botón de regreso dentro del Frame -->
+                    <!-- Botón de regreso -->
                     <Button HorizontalOptions="Start"
                             VerticalOptions="Start"
                             BackgroundColor="Transparent"
@@ -38,15 +38,12 @@
                             Padding="0"
                             WidthRequest="20">
                         <Button.ImageSource>
-                            <!--<FontImageSource Glyph="&#xf104;" 
-                                             FontFamily="FontAwesome" 
-                                             Size="24" 
-                                             Color="Black"/>-->
                             <FileImageSource File="back.png" />
                         </Button.ImageSource>
                     </Button>
-                    <!-- Título Crear Categoría -->
-                    <Label Text="Crear Categoría"
+
+                    <!-- Título Editar Categoría -->
+                    <Label Text="Editar Categoría"
                            FontSize="24"
                            FontAttributes="Bold"
                            HorizontalOptions="Center"
@@ -60,7 +57,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Entry Placeholder="Nombre de la Categoría"
-                               Text="{Binding NuevaCategoria.name}"
+                               Text="{Binding CategoriaSeleccionada.name}"
                                TextColor="Black"
                                BackgroundColor="White" />
                     </Frame>
@@ -72,19 +69,19 @@
                            Padding="5"
                            HasShadow="True">
                         <Editor Placeholder="Descripción de la Categoría"
-                                Text="{Binding NuevaCategoria.description}"
+                                Text="{Binding CategoriaSeleccionada.description}"
                                 TextColor="Black"
                                 BackgroundColor="White"
                                 HeightRequest="100"
                                 VerticalOptions="FillAndExpand" />
                     </Frame>
 
-                    <!-- Botón Crear Categoría -->
-                    <Button Text="Crear Categoría"
+                    <!-- Botón Actualizar Categoría -->
+                    <Button Text="Actualizar Categoría"
                             TextColor="White"
                             CornerRadius="15"
                             Padding="10"
-                            Command="{Binding CrearCategoriaCommand}">
+                            Command="{Binding ActualizarCategoriaCommand}">
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#6495ED" Offset="0.0" />

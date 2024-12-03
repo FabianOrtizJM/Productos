@@ -8,6 +8,7 @@ namespace Productos
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(Categorias), typeof(Productos.Views.Categorias));
+            Routing.RegisterRoute(nameof(editCategoria), typeof(Productos.Views.editCategoria));
 
             //MainPage = new AppShell();
             MainPage = new Login();

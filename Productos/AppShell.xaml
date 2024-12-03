@@ -21,11 +21,11 @@
                 ContentTemplate="{DataTemplate local:Categorias}">
             </ShellContent>
         </Tab>-->
-        <Tab Title="Añadir">
+        <!--<Tab Title="Añadir">
             <ShellContent 
                 ContentTemplate="{DataTemplate local:Productos}">
             </ShellContent>
-        </Tab>
+        </Tab>-->
         <Tab Title="plist">
             <ShellContent 
                 ContentTemplate="{DataTemplate local:ProductosList}">

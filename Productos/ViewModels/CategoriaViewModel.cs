@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Productos;
-using Productos.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text;
 using System.Windows.Input;
+using Productos.Models;
+using Productos.Views;
+using Productos;
 
 public class CategoriaViewModel : INotifyPropertyChanged
 {
@@ -18,13 +16,30 @@ public class CategoriaViewModel : INotifyPropertyChanged
     public ICommand CargarCategoriasCommand { get; }
     public ICommand EliminarCategoriaCommand { get; }
     public ICommand IrAgregarCommand { get; }
+    public ICommand IrEditarCommand { get; }
     public ICommand CrearCategoriaCommand { get; }
+    public ICommand ActualizarCategoriaCommand { get; }
 
     private Categoria _categoriaSeleccionada;
+    private Categoria _categoriaOriginal;
+
     public Categoria CategoriaSeleccionada
     {
         get => _categoriaSeleccionada;
-        set { _categoriaSeleccionada = value; OnPropertyChanged(); }
+        set
+        {
+            if (_categoriaSeleccionada != value)
+            {
+                _categoriaSeleccionada = value;
+                _categoriaOriginal = new Categoria
+                {
+                    id = (int)(value?.id),
+                    name = value?.name,
+                    description = value?.description
+                };
+                OnPropertyChanged();
+            }
+        }
     }
 
     private Categoria _nuevaCategoria = new Categoria();
@@ -40,9 +55,53 @@ public class CategoriaViewModel : INotifyPropertyChanged
         CargarCategoriasCommand = new Command(async () => await CargarCategoriasAsync());
         EliminarCategoriaCommand = new Command<Categoria>(async (categoria) => await EliminarCategoriaAsync(categoria));
         IrAgregarCommand = new Command(async () => await IrACrearCategoria());
+        IrEditarCommand = new Command<Categoria>(async (categoria) => await IrAEditarCategoria(categoria));
         CrearCategoriaCommand = new Command(async () => await CrearCategoriaAsync());
+        ActualizarCategoriaCommand = new Command(async () => await ActualizarCategoriaAsync());
 
         _ = CargarCategoriasAsync();
+    }
+
+    private async Task ActualizarCategoriaAsync()
+    {
+        if (CategoriaSeleccionada == null || string.IsNullOrWhiteSpace(CategoriaSeleccionada.description))
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "Por favor, complete todos los campos.", "Aceptar");
+            return;
+        }
+
+        var cambios = new Dictionary<string, object>();
+
+        // Solo incluir el nombre si ha cambiado
+        if (_categoriaOriginal.name != CategoriaSeleccionada.name)
+            cambios["name"] = CategoriaSeleccionada.name;
+
+        // Solo incluir la descripción si ha cambiado
+        if (_categoriaOriginal.description != CategoriaSeleccionada.description)
+            cambios["description"] = CategoriaSeleccionada.description;
+
+        if (cambios.Count == 0)
+        {
+            await App.Current.MainPage.DisplayAlert("Aviso", "No se realizaron cambios.", "Aceptar");
+            return;
+        }
+
+        try
+        {
+            var categoriaJson = JsonSerializer.Serialize(cambios);
+            var content = new StringContent(categoriaJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"http://localhost:3000/api/categories/{CategoriaSeleccionada.id}", content);
+            response.EnsureSuccessStatusCode();
+
+            await App.Current.MainPage.DisplayAlert("Éxito", "Categoría actualizada con éxito.", "Aceptar");
+            await Shell.Current.GoToAsync("..");  // Volver a la vista anterior
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar categoría: {ex.Message}");
+            await App.Current.MainPage.DisplayAlert("Error", "Hubo un problema al actualizar la categoría.", "Aceptar");
+        }
     }
 
     private async Task CrearCategoriaAsync()
@@ -61,7 +120,6 @@ public class CategoriaViewModel : INotifyPropertyChanged
             var response = await _httpClient.PostAsync("http://localhost:3000/api/categories", content);
             response.EnsureSuccessStatusCode();
 
-            // Limpiar los campos después de crear la categoría
             NuevaCategoria = new Categoria();
             await App.Current.MainPage.DisplayAlert("Éxito", "Categoría creada con éxito.", "Aceptar");
 
@@ -124,7 +182,12 @@ public class CategoriaViewModel : INotifyPropertyChanged
     private async Task IrACrearCategoria()
     {
         await Shell.Current.GoToAsync(nameof(Categorias));
-        //await Shell.Current.GoToAsync($"//{nameof(Categorias)}");
+    }
+
+    private async Task IrAEditarCategoria(Categoria categoria)
+    {
+        var json = JsonSerializer.Serialize(categoria);
+        await Shell.Current.GoToAsync($"{nameof(editCategoria)}?categoria={json}");
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

@@ -148,7 +148,7 @@
                                                              Spacing="5"
                                                              HorizontalOptions="CenterAndExpand">
                                                     <!-- Botón Editar -->
-                                                    <Button Command="{Binding BindingContext.EditarCommand, Source={x:Reference categoriasPage}}"
+                                                    <Button Command="{Binding BindingContext.IrEditarCommand, Source={x:Reference categoriasPage}}"
                                                             CommandParameter="{Binding .}"
                                                             BackgroundColor="Transparent"
                                                             Padding="5"
