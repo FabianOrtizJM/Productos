@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="Productos.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -7,21 +6,17 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Productos">
 
-    <!--<ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />-->
-
-    <Shell.TitleView>
-        <HorizontalStackLayout Spacing="10" Padding="5" BackgroundColor="#114676" IgnoreSafeArea="True">
+    <!--<Shell.TitleView>
+        <HorizontalStackLayout Spacing="10" Padding="5" BackgroundColor="#6600FF" IgnoreSafeArea="True">
             <Label Text="xd" 
-                       FontSize="Medium" 
-                       VerticalOptions="Center" 
-                       HorizontalOptions="Center" 
-                       TextColor="White"/>
+                   FontSize="Medium" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" 
+                   TextColor="White"/>
         </HorizontalStackLayout>
-    </Shell.TitleView>
-    <TabBar Shell.TabBarBackgroundColor="#114676" Shell.TabBarTitleColor="White" Shell.TabBarUnselectedColor="White">
+    </Shell.TitleView>-->
+
+    <TabBar Shell.TabBarBackgroundColor="Transparent" Shell.TabBarTitleColor="White" Shell.TabBarUnselectedColor="White">
         <Tab Title="Cambio">
             <ShellContent 
                 ContentTemplate="{DataTemplate local:Categorias}">
@@ -30,6 +25,21 @@
         <Tab Title="Añadir">
             <ShellContent 
                 ContentTemplate="{DataTemplate local:Productos}">
+            </ShellContent>
+        </Tab>
+        <Tab Title="Login">
+            <ShellContent 
+                ContentTemplate="{DataTemplate local:Login}">
+            </ShellContent>
+        </Tab>
+        <Tab Title="plist">
+            <ShellContent 
+                ContentTemplate="{DataTemplate local:ProductosList}">
+            </ShellContent>
+        </Tab>
+        <Tab Title="pcat">
+            <ShellContent 
+                ContentTemplate="{DataTemplate local:CategoriasList}">
             </ShellContent>
         </Tab>
     </TabBar>
