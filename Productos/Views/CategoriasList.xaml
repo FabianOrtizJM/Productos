@@ -127,7 +127,7 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <!-- Nombre de la Categoría -->
-                                                <Label Text="{Binding Nombre}"
+                                                <Label Text="{Binding name}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        FontAttributes="Bold"
@@ -136,7 +136,7 @@
                                                        HorizontalOptions="Center" />
 
                                                 <!-- Descripción de la Categoría -->
-                                                <Label Text="{Binding Descripcion}"
+                                                <Label Text="{Binding description}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        Grid.Column="1"
@@ -160,7 +160,7 @@
                                                     </Button>
 
                                                     <!-- Botón Eliminar -->
-                                                    <Button Command="{Binding BindingContext.EliminarCommand, Source={x:Reference categoriasPage}}"
+                                                    <Button Command="{Binding BindingContext.EliminarCategoriaCommand, Source={x:Reference categoriasPage}}"
                                                             CommandParameter="{Binding .}"
                                                             BackgroundColor="Transparent"
                                                             Padding="5"

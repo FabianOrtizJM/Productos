@@ -13,7 +13,6 @@ public class CategoriaViewModel : INotifyPropertyChanged
     public ObservableCollection<Categoria> Categorias { get; set; } = new();
 
     public ICommand CargarCategoriasCommand { get; }
-    public ICommand AgregarCategoriaCommand { get; }
     public ICommand EliminarCategoriaCommand { get; }
 
     private Categoria _categoriaSeleccionada;
@@ -23,13 +22,11 @@ public class CategoriaViewModel : INotifyPropertyChanged
         set { _categoriaSeleccionada = value; OnPropertyChanged(); }
     }
 
-    public CategoriaViewModel(HttpClient httpClient)
+    public CategoriaViewModel()
     {
-        _httpClient = httpClient;
-
+        _httpClient = new HttpClient();
         CargarCategoriasCommand = new Command(async () => await CargarCategoriasAsync());
-        AgregarCategoriaCommand = new Command(async () => await AgregarCategoriaAsync());
-        EliminarCategoriaCommand = new Command(async () => await EliminarCategoriaAsync());
+        EliminarCategoriaCommand = new Command(async (categoria) => await EliminarCategoriaAsync(categoria));
 
         _ = CargarCategoriasAsync();
     }
@@ -38,14 +35,16 @@ public class CategoriaViewModel : INotifyPropertyChanged
     {
         try
         {
-            var response = await _httpClient.GetAsync("https://api.example.com/categorias");
+            var response = await _httpClient.GetAsync("http://localhost:3000/api/categories");
             response.EnsureSuccessStatusCode();
-
             var json = await response.Content.ReadAsStringAsync();
             var categorias = JsonSerializer.Deserialize<List<Categoria>>(json);
 
-            Categorias = new ObservableCollection<Categoria>(categorias);
-            OnPropertyChanged(nameof(Categorias));
+            Categorias.Clear();
+            foreach (var categoria in categorias)
+            {
+                Categorias.Add(categoria);
+            }
         }
         catch (Exception ex)
         {
@@ -53,44 +52,24 @@ public class CategoriaViewModel : INotifyPropertyChanged
         }
     }
 
-    private async Task AgregarCategoriaAsync()
+    private async Task EliminarCategoriaAsync(object categoriaObj)
     {
-        try
+        if (categoriaObj is Categoria categoriaSeleccionada)
         {
-            var nuevaCategoria = new Categoria { Nombre = "Nueva Categoría" };
-            var json = JsonSerializer.Serialize(nuevaCategoria);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync("https://api.example.com/categorias", content);
-            response.EnsureSuccessStatusCode();
-
-            Categorias.Add(nuevaCategoria);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al agregar categoría: {ex.Message}");
-        }
-    }
-
-    private async Task EliminarCategoriaAsync()
-    {
-        try
-        {
-            if (CategoriaSeleccionada == null) return;
-
-            var response = await _httpClient.DeleteAsync($"https://api.example.com/categorias/{CategoriaSeleccionada.Id}");
-            response.EnsureSuccessStatusCode();
-
-            Categorias.Remove(CategoriaSeleccionada);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"http://localhost:3000/api/categories/{categoriaSeleccionada.id}");
+                response.EnsureSuccessStatusCode();
+                Categorias.Remove(categoriaSeleccionada);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
+            }
         }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-
     protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

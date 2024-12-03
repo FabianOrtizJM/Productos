@@ -83,7 +83,7 @@ public class ProductoViewModel : INotifyPropertyChanged
                 Nombre = "Nuevo Producto",
                 Descripcion = "Descripción",
                 Precio = 100,
-                CategoriaId = Categorias.FirstOrDefault()?.Id ?? 0
+                CategoriaId = Categorias.FirstOrDefault()?.id ?? 0
             };
 
             var json = JsonSerializer.Serialize(nuevoProducto);

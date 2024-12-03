@@ -8,14 +8,14 @@ namespace Productos.Models
     public class Categoria
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(100)]
         [Required]
-        public string? Nombre { get; set; }
+        public string? name { get; set; }
 
         [MaxLength(250)]
-        public string? Descripcion { get; set; }
+        public string? description { get; set; }
 
         // Propiedad de navegación para los productos en esta categoría
         public ICollection<Producto> Productos { get; set; }

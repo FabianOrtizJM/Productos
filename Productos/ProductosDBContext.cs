@@ -29,10 +29,10 @@ namespace Productos
             // Configuración de la entidad "Categoria"
             modelBuilder.Entity<Categoria>(entity =>
             {
-                entity.HasKey(e => e.Id); // Clave primaria
-                entity.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
-                entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Descripcion).HasMaxLength(250);
+                entity.HasKey(e => e.id); // Clave primaria
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.description).HasMaxLength(250);
 
                 // Relación con Producto (1:N)
                 entity.HasMany(c => c.Productos)
@@ -76,8 +76,8 @@ namespace Productos
         {
             // Datos iniciales para Categorías
             modelBuilder.Entity<Categoria>().HasData(
-                new Categoria { Id = 1, Nombre = "Electrónica", Descripcion = "Dispositivos electrónicos" },
-                new Categoria { Id = 2, Nombre = "Ropa", Descripcion = "Prendas de vestir" }
+                new Categoria { id = 1, name = "Electrónica", description = "Dispositivos electrónicos" },
+                new Categoria { id = 2, name = "Ropa", description = "Prendas de vestir" }
             );
 
             // Datos iniciales para Empleados
