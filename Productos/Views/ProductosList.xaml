@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Productos.Views.ProductosList"
+             x:Name="productosPage"
+             Title="Lista de Productos">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="Red" Offset="0.0" />
+            <GradientStop Color="Blue" Offset="0.5" />
+            <GradientStop Color="DarkViolet" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ScrollView Grid.Row="1"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Always">
+            <Frame BackgroundColor="White"
+                   CornerRadius="20"
+                   Padding="20"
+                   HasShadow="True"
+                   HorizontalOptions="FillAndExpand"
+                   VerticalOptions="Start"
+                   Margin="0, 20">
+                <StackLayout Spacing="20">
+                    <Label Text="Lista de Productos"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="#333333" />
+
+                    <!-- Botón para Crear Nuevo Producto -->
+                    <Button Text="Nuevo Producto"
+                            TextColor="White"
+                            CornerRadius="20"
+                            Padding="10"
+                            FontSize="16"
+                            Command="{Binding NuevoCommand}"
+                            HorizontalOptions="Center"
+                            WidthRequest="200">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#6495ED" Offset="0.0" />
+                                <GradientStop Color="DarkViolet" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+
+                    <!-- ScrollView para permitir desplazamiento horizontal -->
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Always">
+                        <Grid RowSpacing="1"
+                              ColumnSpacing="1"
+                              BackgroundColor="#E0E0E0"
+                              HorizontalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Contenedor con gradiente para el encabezado -->
+                            <BoxView Grid.Row="0"
+                                     Grid.ColumnSpan="5"
+                                     HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="FillAndExpand">
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#6495ED" Offset="0.0" />
+                                        <GradientStop Color="DarkViolet" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
+
+                            <!-- Encabezados -->
+                            <Label Text="Nombre"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Padding="10"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="0" />
+                            <Label Text="Descripción"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Padding="10"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="1" />
+                            <Label Text="Precio"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Padding="10"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="2" />
+                            <Label Text="Categoría"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Padding="10"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="3" />
+                            <Label Text="Acciones"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   Padding="10"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="4" />
+
+                            <!-- Lista de productos -->
+                            <CollectionView ItemsSource="{Binding Productos}"
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="5"
+                                            BackgroundColor="White">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BorderColor="#D3D3D3"
+                                               BackgroundColor="#F5F5F5"
+                                               Padding="10"
+                                               Margin="0,0,0,10"
+                                               CornerRadius="0">
+                                            <Grid Padding="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="3*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                    <ColumnDefinition Width="2*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Nombre del Producto -->
+                                                <Label Text="{Binding Nombre}"
+                                                       VerticalOptions="Center"
+                                                       TextColor="#555555"
+                                                       FontAttributes="Bold"
+                                                       Grid.Column="0"
+                                                       Padding="5"
+                                                       HorizontalOptions="Center" />
+
+                                                <!-- Descripción del Producto -->
+                                                <Label Text="{Binding Descripcion}"
+                                                       VerticalOptions="Center"
+                                                       TextColor="#555555"
+                                                       Grid.Column="1"
+                                                       Padding="5"
+                                                       HorizontalOptions="Center" />
+
+                                                <!-- Precio del Producto -->
+                                                <Label Text="{Binding Precio}"
+                                                       VerticalOptions="Center"
+                                                       TextColor="#555555"
+                                                       Grid.Column="2"
+                                                       Padding="5"
+                                                       HorizontalOptions="Center" />
+
+                                                <!-- Categoría del Producto -->
+                                                <Label Text="{Binding Categoria}"
+                                                       VerticalOptions="Center"
+                                                       TextColor="#555555"
+                                                       Grid.Column="3"
+                                                       Padding="5"
+                                                       HorizontalOptions="Center" />
+
+                                                <!-- Botones de acciones -->
+                                                <StackLayout Orientation="Horizontal" 
+                                                             Grid.Column="4" 
+                                                             Spacing="5"
+                                                             HorizontalOptions="CenterAndExpand">
+                                                    <!-- Icono Editar -->
+                                                    <Button Command="{Binding BindingContext.EditarCommand, Source={x:Reference productosPage}}"
+                                                            CommandParameter="{Binding .}"
+                                                            BackgroundColor="Transparent"
+                                                            Padding="5"
+                                                            WidthRequest="30">
+                                                        <Button.ImageSource>
+                                                            <FileImageSource File="edit.png" />
+                                                        </Button.ImageSource>
+                                                    </Button>
+
+                                                    <!-- Icono Eliminar -->
+                                                    <Button Command="{Binding BindingContext.EliminarCommand, Source={x:Reference productosPage}}"
+                                                            CommandParameter="{Binding .}"
+                                                            BackgroundColor="Transparent"
+                                                            Padding="5"
+                                                            WidthRequest="30">
+                                                        <Button.ImageSource>
+                                                            <FileImageSource File="delete.png" />
+                                                        </Button.ImageSource>
+                                                    </Button>
+                                                </StackLayout>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </ScrollView>
+                </StackLayout>
+            </Frame>
+        </ScrollView>
+    </Grid>
+</ContentPage>
