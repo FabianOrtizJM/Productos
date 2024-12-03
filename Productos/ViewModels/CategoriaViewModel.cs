@@ -1,4 +1,5 @@
-﻿using Productos.Models;
+﻿using Productos;
+using Productos.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.Http;
@@ -26,12 +27,12 @@ public class CategoriaViewModel : INotifyPropertyChanged
     {
         _httpClient = new HttpClient();
         CargarCategoriasCommand = new Command(async () => await CargarCategoriasAsync());
-        EliminarCategoriaCommand = new Command(async (categoria) => await EliminarCategoriaAsync(categoria));
+        EliminarCategoriaCommand = new Command<Categoria>(async (categoria) => await EliminarCategoriaAsync(categoria));
 
         _ = CargarCategoriasAsync();
     }
 
-    private async Task CargarCategoriasAsync()
+    public async Task CargarCategoriasAsync()
     {
         try
         {
@@ -52,20 +53,29 @@ public class CategoriaViewModel : INotifyPropertyChanged
         }
     }
 
-    private async Task EliminarCategoriaAsync(object categoriaObj)
+    private async Task EliminarCategoriaAsync(Categoria categoria)
     {
-        if (categoriaObj is Categoria categoriaSeleccionada)
+        try
         {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"http://localhost:3000/api/categories/{categoriaSeleccionada.id}");
-                response.EnsureSuccessStatusCode();
-                Categorias.Remove(categoriaSeleccionada);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
-            }
+            bool isConfirmed = await App.Current.MainPage.DisplayAlert(
+                "Confirmación",
+                "¿Estás seguro de que deseas eliminar esta categoría?",
+                "Sí", "No");
+
+            if (!isConfirmed)
+                return;
+
+            var response = await _httpClient.DeleteAsync($"http://localhost:3000/api/categories/{categoria.id}");
+            response.EnsureSuccessStatusCode();
+
+            Categorias.Remove(categoria);
+
+            await App.Current.MainPage.DisplayAlert("Éxito", "Categoría eliminada con éxito.", "Aceptar");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
+            await App.Current.MainPage.DisplayAlert("Error", "Hubo un problema al eliminar la categoría.", "Aceptar");
         }
     }
 

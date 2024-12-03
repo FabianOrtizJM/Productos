@@ -13,4 +13,11 @@ public partial class CategoriasList : ContentPage
         ViewModel = new CategoriaViewModel();
         BindingContext = ViewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        // Recargar las categorías cada vez que la vista aparezca
+        await ViewModel.CargarCategoriasAsync();
+    }
 }
