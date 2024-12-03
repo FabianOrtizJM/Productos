@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Productos.Views.CategoriasList"
-             x:Name="categoriasPage"
-             Title="Lista de Categorías">
+             x:Name="categoriasPage">
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="Red" Offset="0.0" />
@@ -41,7 +40,7 @@
                             CornerRadius="20"
                             Padding="10"
                             FontSize="16"
-                            Command="{Binding NuevoCommand}"
+                            Command="{Binding IrAgregarCommand}"
                             HorizontalOptions="Center"
                             WidthRequest="200">
                         <Button.Background>

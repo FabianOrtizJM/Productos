@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Productos.Views.Productos"
              xmlns:vm="clr-namespace:Productos.ViewModels"
-             Title="Crear Producto"
              BackgroundColor="Transparent">
 
     <ContentPage.Background>

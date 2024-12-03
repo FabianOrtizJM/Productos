@@ -1,4 +1,5 @@
-﻿using Productos;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Productos;
 using Productos.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,6 +16,7 @@ public class CategoriaViewModel : INotifyPropertyChanged
 
     public ICommand CargarCategoriasCommand { get; }
     public ICommand EliminarCategoriaCommand { get; }
+    public ICommand IrAgregarCommand { get; }
 
     private Categoria _categoriaSeleccionada;
     public Categoria CategoriaSeleccionada
@@ -28,6 +30,7 @@ public class CategoriaViewModel : INotifyPropertyChanged
         _httpClient = new HttpClient();
         CargarCategoriasCommand = new Command(async () => await CargarCategoriasAsync());
         EliminarCategoriaCommand = new Command<Categoria>(async (categoria) => await EliminarCategoriaAsync(categoria));
+        IrAgregarCommand = new Command(async () => await IrACrearCategoria());
 
         _ = CargarCategoriasAsync();
     }
@@ -77,6 +80,12 @@ public class CategoriaViewModel : INotifyPropertyChanged
             Console.WriteLine($"Error al eliminar categoría: {ex.Message}");
             await App.Current.MainPage.DisplayAlert("Error", "Hubo un problema al eliminar la categoría.", "Aceptar");
         }
+    }
+
+    private async Task IrACrearCategoria()
+    {
+        await Shell.Current.GoToAsync(nameof(Categorias));
+        //await Shell.Current.GoToAsync($"//{nameof(Categorias)}");
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

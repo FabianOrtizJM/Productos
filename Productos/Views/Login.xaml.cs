@@ -7,9 +7,25 @@ public partial class Login : ContentPage
 		InitializeComponent();
 	}
 
-    private void OnLoginButtonClicked(object sender, EventArgs e)
+    private async void OnLoginButtonClicked(object sender, EventArgs e)
     {
-        // Aquí puedes manejar la lógica del login
-        DisplayAlert("Login", "Inicio de sesión exitoso", "OK");
+        // Aquí puedes manejar la lógica de validación de login
+        var username = usernameEntry.Text;
+        var password = passwordEntry.Text;
+
+        // Ejemplo de autenticación (esto puedes modificarlo según tu lógica)
+        if (username == "admin" && password == "1234")
+        {
+            // Mostrar un mensaje de éxito
+            await DisplayAlert("Login", "Inicio de sesión exitoso", "OK");
+
+            // Cambiar la página raíz a AppShell
+            ((App)Application.Current).ChangeToAppShell();
+        }
+        else
+        {
+            // Mostrar un mensaje de error si el login es incorrecto
+            await DisplayAlert("Error", "Usuario o contraseña incorrectos", "OK");
+        }
     }
 }

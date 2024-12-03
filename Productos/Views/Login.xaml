@@ -53,7 +53,7 @@
                            CornerRadius="15"
                            Padding="5"
                            HasShadow="True">
-                        <Entry Placeholder="Nombre" 
+                        <Entry x:Name="usernameEntry" Placeholder="Nombre" 
                                Keyboard="Default"
                                TextColor="Black" 
                                BackgroundColor="White"/>
@@ -65,14 +65,14 @@
                            CornerRadius="15"
                            Padding="5"
                            HasShadow="True">
-                        <Entry Placeholder="Contraseña" 
+                        <Entry x:Name="passwordEntry" Placeholder="Contraseña" 
                                IsPassword="True"
                                TextColor="Black"
                                BackgroundColor="White"/>
                     </Frame>
 
                     <!-- Botón Iniciar Sesión -->
-                    <Button Text="Iniciar Sesión" 
+                    <Button Clicked="OnLoginButtonClicked" Text="Iniciar Sesión" 
                             TextColor="White"
                             CornerRadius="15"
                             Padding="10">

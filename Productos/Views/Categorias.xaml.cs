@@ -6,4 +6,10 @@ public partial class Categorias : ContentPage
 	{
 		InitializeComponent();
 	}
+
+    private async void OnBackButtonClicked(object sender, EventArgs e)
+    {
+        // Navegar a la página anterior
+        await Shell.Current.GoToAsync("..");
+    }
 }
