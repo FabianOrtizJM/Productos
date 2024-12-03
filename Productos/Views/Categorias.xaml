@@ -60,6 +60,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Entry Placeholder="Nombre de la Categoría"
+                               Text="{Binding NuevaCategoria.name}"
                                TextColor="Black"
                                BackgroundColor="White" />
                     </Frame>
@@ -71,6 +72,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Editor Placeholder="Descripción de la Categoría"
+                                Text="{Binding NuevaCategoria.description}"
                                 TextColor="Black"
                                 BackgroundColor="White"
                                 HeightRequest="100"
@@ -81,7 +83,8 @@
                     <Button Text="Crear Categoría"
                             TextColor="White"
                             CornerRadius="15"
-                            Padding="10">
+                            Padding="10"
+                            Command="{Binding CrearCategoriaCommand}">>
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#6495ED" Offset="0.0" />
