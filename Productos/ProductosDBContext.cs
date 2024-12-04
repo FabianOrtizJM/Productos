@@ -36,8 +36,8 @@ namespace Productos
 
                 // Relación con Producto (1:N)
                 entity.HasMany(c => c.Productos)
-                      .WithOne(p => p.Categoria)
-                      .HasForeignKey(p => p.CategoriaId)
+                      .WithOne(p => p.Category)
+                      .HasForeignKey(p => p.categoryId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -55,16 +55,16 @@ namespace Productos
             // Configuración de la entidad "Producto"
             modelBuilder.Entity<Producto>(entity =>
             {
-                entity.HasKey(e => e.Id); // Clave primaria
-                entity.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
-                entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Descripcion).HasMaxLength(250);
-                entity.Property(e => e.Precio).IsRequired().HasColumnType("decimal(10, 2)");
+                entity.HasKey(e => e.id); // Clave primaria
+                entity.Property(e => e.id).IsRequired().ValueGeneratedOnAdd();
+                entity.Property(e => e.name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.description).HasMaxLength(250);
+                entity.Property(e => e.price).IsRequired().HasColumnType("decimal(10, 2)");
 
                 // Relación con Categoria (N:1)
-                entity.HasOne(p => p.Categoria)
+                entity.HasOne(p => p.Category)
                       .WithMany(c => c.Productos)
-                      .HasForeignKey(p => p.CategoriaId)
+                      .HasForeignKey(p => p.categoryId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -88,8 +88,8 @@ namespace Productos
 
             // Datos iniciales para Productos
             modelBuilder.Entity<Producto>().HasData(
-                new Producto { Id = 1, Nombre = "Smartphone", Descripcion = "Teléfono inteligente de última generación", Precio = 500.00m, CategoriaId = 1 },
-                new Producto { Id = 2, Nombre = "Camisa", Descripcion = "Camisa de algodón para hombre", Precio = 30.00m, CategoriaId = 2 }
+                new Producto { id = 1, name = "Smartphone", description = "Teléfono inteligente de última generación", price = "0", categoryId = 1 },
+                new Producto { id = 2, name = "Camisa", description = "Camisa de algodón para hombre", price = "0", categoryId = 2 }
             );
         }
     }

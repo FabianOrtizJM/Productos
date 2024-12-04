@@ -40,7 +40,7 @@
                             CornerRadius="20"
                             Padding="10"
                             FontSize="16"
-                            Command="{Binding NuevoCommand}"
+                            Command="{Binding IrAgregarCommand}"
                             HorizontalOptions="Center"
                             WidthRequest="200">
                         <Button.Background>
@@ -142,7 +142,7 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <!-- Nombre del Producto -->
-                                                <Label Text="{Binding Nombre}"
+                                                <Label Text="{Binding name}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        FontAttributes="Bold"
@@ -151,7 +151,7 @@
                                                        HorizontalOptions="Center" />
 
                                                 <!-- Descripción del Producto -->
-                                                <Label Text="{Binding Descripcion}"
+                                                <Label Text="{Binding description}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        Grid.Column="1"
@@ -159,7 +159,7 @@
                                                        HorizontalOptions="Center" />
 
                                                 <!-- Precio del Producto -->
-                                                <Label Text="{Binding Precio}"
+                                                <Label Text="{Binding price}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        Grid.Column="2"
@@ -167,7 +167,7 @@
                                                        HorizontalOptions="Center" />
 
                                                 <!-- Categoría del Producto -->
-                                                <Label Text="{Binding Categoria}"
+                                                <Label Text="{Binding Category.name}"
                                                        VerticalOptions="Center"
                                                        TextColor="#555555"
                                                        Grid.Column="3"
@@ -191,7 +191,7 @@
                                                     </Button>
 
                                                     <!-- Icono Eliminar -->
-                                                    <Button Command="{Binding BindingContext.EliminarCommand, Source={x:Reference productosPage}}"
+                                                    <Button Command="{Binding BindingContext.EliminarProductoCommand, Source={x:Reference productosPage}}"
                                                             CommandParameter="{Binding .}"
                                                             BackgroundColor="Transparent"
                                                             Padding="5"

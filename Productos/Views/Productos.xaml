@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Productos.Views.Productos"
+             x:Class="Productos.Views.ProductosV"
              xmlns:vm="clr-namespace:Productos.ViewModels"
              BackgroundColor="Transparent">
 
@@ -31,6 +31,22 @@
                    WidthRequest="{Binding Source={x:Reference ContentPage}, Path=Width, Converter={StaticResource ScreenWidthToResponsiveWidthConverter}}">
 
                 <StackLayout Spacing="25">
+                    <!-- Botón de regreso dentro del Frame -->
+                    <Button HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            BackgroundColor="Transparent"
+                            Clicked="OnBackButtonClicked"
+                            Margin="0,-10,0,-25"
+                            Padding="0"
+                            WidthRequest="20">
+                        <Button.ImageSource>
+                            <!--<FontImageSource Glyph="&#xf104;" 
+                                             FontFamily="FontAwesome" 
+                                             Size="24" 
+                                             Color="Black"/>-->
+                            <FileImageSource File="back.png" />
+                        </Button.ImageSource>
+                    </Button>
                     <!-- Título Crear Producto -->
                     <Label Text="Crear Producto"
                            FontSize="24"

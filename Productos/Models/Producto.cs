@@ -7,22 +7,22 @@ namespace Productos.Models
     public class Producto
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(100)]
         [Required]
-        public string Nombre { get; set; }
+        public string name { get; set; }
 
         [MaxLength(250)]
-        public string Descripcion { get; set; }
+        public string description { get; set; }
 
         [Required]
-        public decimal Precio { get; set; }
+        public string price { get; set; }
 
         [Required]
-        public int CategoriaId { get; set; }
+        public int categoryId { get; set; }
 
         // Propiedad de navegación para la categoría
-        public Categoria Categoria { get; set; }
+        public Categoria Category { get; set; }
     }
 }
