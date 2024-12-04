@@ -15,12 +15,14 @@ public class ProductoViewModel : INotifyPropertyChanged
 {
     private readonly HttpClient _httpClient;
     public ObservableCollection<Producto> Productos { get; set; } = new();
+    public ObservableCollection<Categoria> Categorias { get; set; } = new();
 
     public ICommand CargarProductosCommand { get; }
     public ICommand EliminarProductoCommand { get; }
     public ICommand IrAgregarCommand { get; }
     public ICommand IrEditarCommand { get; }
     public ICommand CrearProductoCommand { get; }
+    public ICommand EditarProductoCommand { get; }
 
     private Producto _productoSeleccionado;
     private Producto _productoOriginal;
@@ -39,7 +41,8 @@ public class ProductoViewModel : INotifyPropertyChanged
                     name = value?.name,
                     description = value?.description,
                     price = value?.price ?? "0",
-                    categoryId = value?.categoryId ?? 0
+                    categoryId = value?.categoryId ?? 0,
+                    Category = value?.Category
                 };
                 OnPropertyChanged();
             }
@@ -62,6 +65,7 @@ public class ProductoViewModel : INotifyPropertyChanged
         IrAgregarCommand = new Command(async () => await IrACrearProducto());
         IrEditarCommand = new Command<Producto>(async (producto) => await IrAEditarProducto(producto));
         CrearProductoCommand = new Command(async () => await CrearProductoAsync());
+        EditarProductoCommand = new Command(async () => await EditarProductoAsync());
 
         _ = CargarProductosAsync();
     }
@@ -97,15 +101,31 @@ public class ProductoViewModel : INotifyPropertyChanged
 
     private async Task CrearProductoAsync()
     {
-        if (string.IsNullOrWhiteSpace(NuevoProducto.name) )/*|| NuevoProducto.price <= 0)*/
+        if (string.IsNullOrWhiteSpace(NuevoProducto.name) || string.IsNullOrWhiteSpace(NuevoProducto.description) || string.IsNullOrWhiteSpace(NuevoProducto.price) || NuevoProducto.Category == null)
         {
             await App.Current.MainPage.DisplayAlert("Error", "Por favor, complete todos los campos.", "Aceptar");
             return;
         }
 
+        if (!decimal.TryParse(NuevoProducto.price, out decimal precioDecimal) || precioDecimal <= 0)
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "El precio debe ser un número válido mayor a 0.", "Aceptar");
+            return;
+        }
+
         try
         {
-            var productoJson = JsonSerializer.Serialize(NuevoProducto);
+            // Setear stock en 0 y obtener categoryId
+            var productoParaEnviar = new
+            {
+                name = NuevoProducto.name,
+                price = precioDecimal,
+                stock = 0,
+                categoryId = NuevoProducto.Category.id,
+                description = NuevoProducto.description
+            };
+
+            var productoJson = JsonSerializer.Serialize(productoParaEnviar);
             var content = new StringContent(productoJson, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("http://localhost:3000/api/products", content);
             response.EnsureSuccessStatusCode();
@@ -119,6 +139,46 @@ public class ProductoViewModel : INotifyPropertyChanged
         {
             Console.WriteLine($"Error al crear producto: {ex.Message}");
             await App.Current.MainPage.DisplayAlert("Error", "Hubo un problema al crear el producto.", "Aceptar");
+        }
+    }
+
+    private async Task EditarProductoAsync()
+    {
+        if (string.IsNullOrWhiteSpace(ProductoSeleccionado.name) || string.IsNullOrWhiteSpace(ProductoSeleccionado.description) || string.IsNullOrWhiteSpace(ProductoSeleccionado.price) || ProductoSeleccionado.Category == null)
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "Por favor, complete todos los campos.", "Aceptar");
+            return;
+        }
+
+        if (!decimal.TryParse(ProductoSeleccionado.price, out decimal precioDecimal) || precioDecimal <= 0)
+        {
+            await App.Current.MainPage.DisplayAlert("Error", "El precio debe ser un número válido mayor a 0.", "Aceptar");
+            return;
+        }
+
+        try
+        {
+            var productoParaEnviar = new
+            {
+                name = ProductoSeleccionado.name,
+                price = precioDecimal,
+                stock = 0,
+                categoryId = ProductoSeleccionado.Category.id,
+                description = ProductoSeleccionado.description
+            };
+
+            var productoJson = JsonSerializer.Serialize(productoParaEnviar);
+            var content = new StringContent(productoJson, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"http://localhost:3000/api/products/{ProductoSeleccionado.id}", content);
+            response.EnsureSuccessStatusCode();
+
+            await App.Current.MainPage.DisplayAlert("Éxito", "Producto editado con éxito.", "Aceptar");
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al editar producto: {ex.Message}");
+            await App.Current.MainPage.DisplayAlert("Error", "Hubo un problema al editar el producto.", "Aceptar");
         }
     }
 
@@ -153,8 +213,29 @@ public class ProductoViewModel : INotifyPropertyChanged
 
     private async Task IrAEditarProducto(Producto producto)
     {
-        //var json = JsonSerializer.Serialize(producto);
-        //await Shell.Current.GoToAsync($"{nameof(EditProducto)}?producto={json}");
+        var json = JsonSerializer.Serialize(producto);
+        await Shell.Current.GoToAsync($"{nameof(editProducto)}?producto={json}");
+    }
+
+    public async Task CargarCategoriasAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("http://localhost:3000/api/categories");
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            var categorias = JsonSerializer.Deserialize<List<Categoria>>(json);
+
+            Categorias.Clear();
+            foreach (var categoria in categorias)
+            {
+                Categorias.Add(categoria);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
+        }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

@@ -62,6 +62,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Entry Placeholder="Nombre del Producto"
+                               Text="{Binding NuevoProducto.name}"
                                TextColor="Black"
                                BackgroundColor="White" />
                     </Frame>
@@ -73,6 +74,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Editor Placeholder="Descripción del Producto"
+                                Text="{Binding NuevoProducto.description}"
                                 TextColor="Black"
                                 BackgroundColor="White"
                                 HeightRequest="100"
@@ -87,6 +89,7 @@
                            Padding="5"
                            HasShadow="True">
                         <Entry Placeholder="Precio"
+                               Text="{Binding NuevoProducto.price}"
                                Keyboard="Numeric"
                                TextColor="Black"
                                BackgroundColor="White" />
@@ -100,7 +103,8 @@
                            HasShadow="True">
                         <Picker Title="Seleccionar Categoría"
                                 ItemsSource="{Binding Categorias}"
-                                SelectedItem="{Binding Producto.CategoriaId}"
+                                SelectedItem="{Binding NuevoProducto.Category, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding name}"
                                 TextColor="Black" />
                     </Frame>
 
@@ -108,7 +112,8 @@
                     <Button Text="Crear Producto"
                             TextColor="White"
                             CornerRadius="15"
-                            Padding="10">
+                            Padding="10"
+                            Command="{Binding CrearProductoCommand}">
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#6495ED" Offset="0.0" />

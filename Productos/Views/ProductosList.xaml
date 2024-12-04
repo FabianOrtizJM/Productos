@@ -180,7 +180,7 @@
                                                              Spacing="5"
                                                              HorizontalOptions="CenterAndExpand">
                                                     <!-- Icono Editar -->
-                                                    <Button Command="{Binding BindingContext.EditarCommand, Source={x:Reference productosPage}}"
+                                                    <Button Command="{Binding BindingContext.IrEditarCommand, Source={x:Reference productosPage}}"
                                                             CommandParameter="{Binding .}"
                                                             BackgroundColor="Transparent"
                                                             Padding="5"

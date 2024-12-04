@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Productos.Views.editProducto">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="Red" Offset="0.0" />
+            <GradientStop Color="Blue" Offset="0.5" />
+            <GradientStop Color="DarkViolet" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ScrollView Grid.Row="1">
+            <Frame BackgroundColor="White"
+                  CornerRadius="30"
+                  Padding="30"
+                  HasShadow="True"
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="Start"
+                  MaximumWidthRequest="500"
+                  Margin="0, 10"
+                  WidthRequest="{Binding Source={x:Reference ContentPage}, Path=Width, Converter={StaticResource ScreenWidthToResponsiveWidthConverter}}">
+
+                <StackLayout Spacing="25">
+                    <!-- Botón de regreso dentro del Frame -->
+                    <Button HorizontalOptions="Start"
+                           VerticalOptions="Start"
+                           BackgroundColor="Transparent"
+                           Clicked="OnBackButtonClicked"
+                           Margin="0,-10,0,-25"
+                           Padding="0"
+                           WidthRequest="20">
+                        <Button.ImageSource>
+                            <!--<FontImageSource Glyph="&#xf104;" 
+                                            FontFamily="FontAwesome" 
+                                            Size="24" 
+                                            Color="Black"/>-->
+                            <FileImageSource File="back.png" />
+                        </Button.ImageSource>
+                    </Button>
+                    <!-- Título Crear Producto -->
+                    <Label Text="Editar Producto"
+                          FontSize="24"
+                          FontAttributes="Bold"
+                          HorizontalOptions="Center"
+                          TextColor="Black"
+                          Margin="0,0,0,10" />
+
+                    <!-- Campo Nombre del Producto -->
+                    <Frame BackgroundColor="White"
+                          BorderColor="#D3D3D3"
+                          CornerRadius="15"
+                          Padding="5"
+                          HasShadow="True">
+                        <Entry Placeholder="Nombre del Producto"
+                              Text="{Binding ProductoSeleccionado.name}"
+                              TextColor="Black"
+                              BackgroundColor="White" />
+                    </Frame>
+
+                    <!-- Campo Descripción del Producto -->
+                    <Frame BackgroundColor="White"
+                          BorderColor="#D3D3D3"
+                          CornerRadius="15"
+                          Padding="5"
+                          HasShadow="True">
+                        <Editor Placeholder="Descripción del Producto"
+                               Text="{Binding ProductoSeleccionado.description}"
+                               TextColor="Black"
+                               BackgroundColor="White"
+                               HeightRequest="100"
+                           VerticalOptions="FillAndExpand" />
+                        <!-- Permite expansión si el contenido es mayor -->
+                    </Frame>
+
+                    <!-- Campo Precio del Producto -->
+                    <Frame BackgroundColor="White"
+                          BorderColor="#D3D3D3"
+                          CornerRadius="15"
+                          Padding="5"
+                          HasShadow="True">
+                        <Entry Placeholder="Precio"
+                              Text="{Binding ProductoSeleccionado.price}"
+                              Keyboard="Numeric"
+                              TextColor="Black"
+                              BackgroundColor="White" />
+                    </Frame>
+
+                    <!-- Campo Selección de Categoría -->
+                    <Frame BackgroundColor="White"
+                          BorderColor="#D3D3D3"
+                          CornerRadius="15"
+                          Padding="5"
+                          HasShadow="True">
+                        <Picker Title="Seleccionar Categoría"
+                               ItemsSource="{Binding Categorias}"
+                               SelectedItem="{Binding ProductoSeleccionado.Category, Mode=TwoWay}"
+                               ItemDisplayBinding="{Binding name}"
+                               TextColor="Black" />
+                    </Frame>
+
+                    <!-- Botón Crear Producto -->
+                    <Button Text="Actualizar Producto"
+                           TextColor="White"
+                           CornerRadius="15"
+                           Padding="10"
+                           Command="{Binding EditarProductoCommand}">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#6495ED" Offset="0.0" />
+                                <GradientStop Color="DarkViolet" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                </StackLayout>
+            </Frame>
+        </ScrollView>
+    </Grid>
+</ContentPage>

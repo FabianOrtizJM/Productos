@@ -2,14 +2,22 @@ namespace Productos.Views;
 
 public partial class ProductosV : ContentPage
 {
-	public ProductosV()
+    public ProductoViewModel ViewModel { get; set; }
+    public ProductosV()
 	{
 		InitializeComponent();
-        BindingContext = new ProductoViewModel();
+        ViewModel = new ProductoViewModel();
+        BindingContext = ViewModel;
 	}
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
         // Navegar a la página anterior
         await Shell.Current.GoToAsync("..");
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ViewModel.CargarCategoriasAsync();
     }
 }
