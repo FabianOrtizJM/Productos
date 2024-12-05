@@ -101,8 +101,7 @@
                            CornerRadius="15"
                            Padding="5"
                            HasShadow="True">
-                        <Picker Title="Seleccionar Categoría"
-                                ItemsSource="{Binding Categorias}"
+                        <Picker ItemsSource="{Binding Categorias}"
                                 SelectedItem="{Binding NuevoProducto.Category, Mode=TwoWay}"
                                 ItemDisplayBinding="{Binding name}"
                                 TextColor="Black" />

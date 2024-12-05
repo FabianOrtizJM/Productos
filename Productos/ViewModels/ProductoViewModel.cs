@@ -231,6 +231,12 @@ public class ProductoViewModel : INotifyPropertyChanged
             {
                 Categorias.Add(categoria);
             }
+            // Asignar categoría por defecto después de cargar
+            if (Categorias.Any())
+            {
+                NuevoProducto.Category = Categorias.First();
+                OnPropertyChanged(nameof(NuevoProducto));
+            }
         }
         catch (Exception ex)
         {
