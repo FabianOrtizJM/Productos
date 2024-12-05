@@ -20,5 +20,14 @@ namespace Productos
         {
             MainPage = new AppShell(); // Cambia a AppShell después del login
         }
+
+        public void ChangeToAppRegistro()
+        {
+            MainPage = new Registro();
+        }
+        public void ChangeToAppLogin()
+        {
+            MainPage = new Login();
+        }
     }
 }

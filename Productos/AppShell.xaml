@@ -36,5 +36,8 @@
                 ContentTemplate="{DataTemplate local:CategoriasList}">
             </ShellContent>
         </Tab>
+        <Tab Title="Acción" Icon="neco.png" Route="AccionTab">
+            <ShellContent ContentTemplate="{DataTemplate ContentPage}" />
+        </Tab>
     </TabBar>
 </Shell>

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Productos.Views.Login"
-             Title="Login"
-             BackgroundColor="Transparent">
-
+             x:Class="Productos.Views.Registro">
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="Red" Offset="0.0" />
@@ -40,7 +37,7 @@
 
                 <StackLayout Spacing="25">
                     <!-- Título de Iniciar Sesión -->
-                    <Label Text="Iniciar Sesión"
+                    <Label Text="Registro"
                            FontSize="24"
                            FontAttributes="Bold"
                            HorizontalOptions="Center"
@@ -53,8 +50,34 @@
                            CornerRadius="15"
                            Padding="5"
                            HasShadow="True">
-                        <Entry x:Name="usernameEntry" Placeholder="Correo" 
-                               Text="{Binding NombreUsuario}"
+                        <Entry x:Name="usernameEntry" Placeholder="Nombre" 
+                               Text="{Binding NuevoEmpleado.Nombre}"
+                               Keyboard="Default"
+                               TextColor="Black" 
+                               BackgroundColor="White"/>
+                    </Frame>
+
+                    <!-- Campo apellido -->
+                    <Frame BackgroundColor="White"
+                           BorderColor="#D3D3D3"
+                           CornerRadius="15"
+                           Padding="5"
+                           HasShadow="True">
+                        <Entry x:Name="usernameApellido" Placeholder="Apellido" 
+                               Text="{Binding NuevoEmpleado.Apellido}"
+                               Keyboard="Default"
+                               TextColor="Black" 
+                               BackgroundColor="White"/>
+                    </Frame>
+
+                    <!-- Campo correo -->
+                    <Frame BackgroundColor="White"
+                           BorderColor="#D3D3D3"
+                           CornerRadius="15"
+                           Padding="5"
+                           HasShadow="True">
+                        <Entry x:Name="correo" Placeholder="Correo" 
+                               Text="{Binding NuevoEmpleado.Correo}"
                                Keyboard="Default"
                                TextColor="Black" 
                                BackgroundColor="White"/>
@@ -67,15 +90,15 @@
                            Padding="5"
                            HasShadow="True">
                         <Entry x:Name="passwordEntry" Placeholder="Contraseña" 
-                               Text="{Binding Password}"
+                               Text="{Binding NuevoEmpleado.Password}"
                                IsPassword="True"
                                TextColor="Black"
                                BackgroundColor="White"/>
                     </Frame>
 
                     <!-- Botón Iniciar Sesión -->
-                    <Button Text="Iniciar Sesión" 
-                            Command="{Binding IniciarSesionCommand}"
+                    <Button Text="Registrarme" 
+                            Command="{Binding RegistrarEmpleadoCommand}"
                             TextColor="White"
                             CornerRadius="15"
                             Padding="10">
@@ -87,13 +110,13 @@
                         </Button.Background>
                     </Button>
                     <!-- Texto como enlace debajo del botón -->
-                    <Label Text="Registrarme"
+                    <Label Text="Iniciar Sesión"
                            FontSize="14"
                            TextColor="Blue"
                            HorizontalOptions="Center"
                            VerticalOptions="End">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding IrRegistroCommand}" />
+                            <TapGestureRecognizer Command="{Binding IrLoginCommand}" />
                         </Label.GestureRecognizers>
                     </Label>
                 </StackLayout>

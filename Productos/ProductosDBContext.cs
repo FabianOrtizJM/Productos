@@ -9,17 +9,10 @@ namespace Productos
         public DbSet<Empleado> Empleados { get; set; }
         public DbSet<Producto> Productos { get; set; }
 
-        public ProductosDBContext(DbContextOptions<ProductosDBContext> options) : base(options)
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Solo configurar si no se pasa `options` en el constructor
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlite("Filename=Productos.db"); // Cambiar según el tipo de base de datos
-            }
+            string dbPath = ConexionDB.DevolverRuta("Productos.db"); // Ruta para la base de datos
+            optionsBuilder.UseSqlite($"Filename={dbPath}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,6 +84,12 @@ namespace Productos
                 new Producto { id = 1, name = "Smartphone", description = "Teléfono inteligente de última generación", price = "0", categoryId = 1 },
                 new Producto { id = 2, name = "Camisa", description = "Camisa de algodón para hombre", price = "0", categoryId = 2 }
             );
+        }
+
+        // Método para asegurarse de que la base de datos existe y se crea si no existe
+        public void EnsureCreated()
+        {
+            Database.EnsureCreated();
         }
     }
 }
